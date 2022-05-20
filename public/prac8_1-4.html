@@ -1,0 +1,90 @@
+<!--
+ * @Author       : 
+ * @Date         : 2022-05-19 10:52:33
+ * @LastEditors  : 
+ * @LastEditTime : 2022-05-19 16:24:02
+ * @FilePath     : \prac7\public\prac8_1-4.html
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Prac 8</title>
+    <meta content="">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css">
+    <style>
+        .button-success {
+            background: rgb(28, 184, 65);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="main">
+
+        <h1>My Blog</h1>
+        <hr />
+        <div id="newpost">
+            <h2>Add a post</h2>
+            <form class="pure-form">
+
+                <fieldset class="pure-group">
+                    <input id="title" type="text" class="pure-input-1-2" placeholder="Blog post title">
+                    <textarea id="content" class="pure-input-1-2" placeholder="Blog Post Content"></textarea>
+                </fieldset>
+
+                <button type="button" onclick="addpost()" class="pure-button pure-input-1-2 pure-button-primary">make post</button>
+            </form>
+        </div>
+        <hr />
+        <div id="posts">
+            <h2>Current Posts</h2>
+            <form class="pure-form">
+                <button type="button" onclick="showpost()" class="pure-button pure-input-1-2 pure-button-primary">show all posts</button>
+            </form>
+            <div id="output"></div>
+        </div>
+
+        <div id="tcs" style="display: none;">
+            <h2>Terms and Conditions</h2>
+            <p>All your base are belong to us.</p>
+            <button class="pure-button button-success">Accept</button>
+        </div>
+
+    </div>
+    <script>
+        function addpost() {
+
+            var title = document.getElementById("title").value;
+            var content = document.getElementById("content").value;
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "/users/addpost", true);
+            xhttp.setRequestHeader("Content-type", "application/json");
+            xhttp.send(JSON.stringify({
+                title,
+                content
+            }));
+
+        }
+
+        function showpost() {
+            var output = document.getElementById('output');
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var res = JSON.parse(this.responseText).map((item) => `<div><h2>${item.title}</h2><p>${item.content}</p></div>`);
+                    output.innerHTML = res;
+                }
+            };
+            xhttp.open("GET", "/users/getposts", true);
+            xhttp.setRequestHeader("Content-type", "application/json");
+            xhttp.send();
+        }
+    </script>
+
+</body>
+
+</html>
